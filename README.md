@@ -35,12 +35,12 @@
 - Install Git for Linux using the command `yum install git -y` or <br>
 - <a href="https://git-scm.com/downloads">Git Bash for Windows</a> to access Git repo and to run the shell script in Windows. 
 
-### Pre-requisite for running resource creation script
+### Pre-requisite to be done in AWS
 - Setup Security group rule for rhel in AWS. In-bound SG rule with SSH port 22 should be enabled.  
 - Setup AWS keypair to be used for login to instance
 
-### Script running procedure
-- Clone the cloud_init_sample repo 
+### Script running procedure (from terminal prompt or Gitbash)
+- Clone the cloud_init_sample repo : `git clone  https://github.com/chefgs/cloud_init_sample`
 - cd cloud_init_sample
 - Fetch the SG-rule name and key-pair name by executing the script `./get_sg_key.sh`
 - Example script execution command structure, `./create_instance.sh 1 rhel_sg_rule myaws_key` .  This command will create 1 EC2 instance of type t2.micro with RHEL OS <br>
