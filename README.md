@@ -50,7 +50,7 @@
 
 ## 4. Source code repo details making this entire functionality
 - I've pushed all the source code in Github, <br>
-[AWS CLI instance create repo](https://github.com/chefgs/aws_cli_scripts/tree/master/cloud_init_sample) <br>
+[AWS CLI instance create repo](https://github.com/chefgs/cloud_init_sample.git) <br>
 [Chef cookbook repo](https://github.com/chefgs/cloud_init.git) <br>
 [Dummy rpm create repo](https://github.com/chefgs/create_dummy_rpm.git) <br>
 
