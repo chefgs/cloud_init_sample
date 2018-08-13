@@ -23,13 +23,13 @@
 - `Github` used as source repo and git commands extensively used while development <br>
 - `Chef-client` run in local-mode eliminating the need of Chef server. <br>
 
-### Script functionality explained
+### Script functionality 
 - `Create_instance.sh` script uses the AWS CLI command to invoke the resource creation in AWS.
 - The AWS CLI command for instance creation is `aws ec2 run-instance`. 
 - We are sending the `install.txt` file as an option in AWS CLI user-data and the script is executed by `Cloud-init` process when the EC2 instance is created.
 - The `install.txt` has the code for installing the required installers, checking out repo from git and running Chef client command to set the desired VM config   
 
-## 2. Instance creation steps Explained
+## 2. Instance creation steps 
 ### Pre-requisite Setup
 - AWS CLI setup / config : <a href="https://docs.aws.amazon.com/cli/latest/userguide/installing.html">AWS CLI</a> and <a href="https://docs.aws.amazon.com/cli/latest/reference/configure/">Configure CLI</a><br>
 - Install Git for Linux using the command `yum install git -y` or <br>
