@@ -11,8 +11,14 @@
 
 ### Goal
 - The script can be used to create the bulk instances, applied with similar config across all the instances. Hence achieving the goal of "Cattle" instance provisioning. <br>
-- In case the instances needed to be updated with new config, We can update the new config as code in Chef recipe. <br>
+- In case the instances needed to be updated with new config, We can update the new config as code in Chef recipe (push the code to git, after the change). <br>
 - We can terminate all previously created instances and then can re-create the instances in bulk by simply executing the script. <br>
+
+### Script functionality 
+- `Create_instance.sh` script uses the AWS CLI command to invoke the resource creation in AWS.
+- The AWS CLI command for instance creation is `aws ec2 run-instance`. 
+- We are sending the `install.txt` file as an option in AWS CLI user-data and the script is executed by `Cloud-init` process when the EC2 instance is created.
+- The `install.txt` has the code for installing the required installers, checking out repo from git and running Chef client command to set the desired VM config 
 
 ### Technologies used
 - `AWS CLI` command for instance creation <br>
@@ -22,12 +28,6 @@
 - `Chef` used for setting the required system state explained in item 2 above <br>
 - `Github` used as source repo and git commands extensively used while development <br>
 - `Chef-client` run in local-mode eliminating the need of Chef server. <br>
-
-### Script functionality 
-- `Create_instance.sh` script uses the AWS CLI command to invoke the resource creation in AWS.
-- The AWS CLI command for instance creation is `aws ec2 run-instance`. 
-- We are sending the `install.txt` file as an option in AWS CLI user-data and the script is executed by `Cloud-init` process when the EC2 instance is created.
-- The `install.txt` has the code for installing the required installers, checking out repo from git and running Chef client command to set the desired VM config   
 
 ## 2. Instance creation steps 
 ### Pre-requisite Setup
