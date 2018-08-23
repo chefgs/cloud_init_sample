@@ -18,7 +18,7 @@
 - `Create_instance.sh` script uses the AWS CLI command to invoke the resource creation in AWS.
 - The AWS CLI command for instance creation is `aws ec2 run-instance`. 
 - We are sending the Cloud-init script file to AWS CLI user-data option. It contains the bash script and is executed by `Cloud-init` process when the EC2 instance is created.
-- System config could be set using different technologies like Chef or Ansible. So I've created two different Cloud-init scripts to show the possibility of using the same AWS resource creation script with config management tool passed an option (refer example below).
+- System config could be set using different technologies like Chef or Ansible. So I've created two different Cloud-init scripts to show the possibility of using the same AWS resource creation script with config management tool passed an option (refer example [below](https://github.com/chefgs/cloud_init_sample/blob/master/README.md#script-running-procedure-from-terminal-prompt-or-gitbash)).
 #### Chef way
 - The `cloud_init_chef.txt` has the code for installing the required installers, checking out repo from git and running `Chef-client` command to set the desired VM config 
 #### Ansible way
