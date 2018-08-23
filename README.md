@@ -1,24 +1,25 @@
 # Cloud Init Sample code Repo
 ## 1. AWS EC2 Instance creation with cloud-init script passed as user_data 
+### Goal
+- The repo can be used to create the bulk instances, applied with similar config across all the instances. 
+- In case the instances needed to be updated with new config, it can be updated in Chef recipe or Ansible playbook (push the code to git, after the change). <br>
+- Then we can terminate all previously created instances and then can re-create the instances in bulk by simply executing the script. <br>
+- Hence achieving the goal of "Cattle" instance provisioning. <br>
+
 ### `create_instance.sh` is the wrapper script which does the following
 -  Creates 'n' number EC2 instances of type t2.micro with RHEL 7 OS <br>
 -  Each instance will be having below configurations set when the instances creation is completed <br>
    - Set a hostname on operating system level <br>
    - Install a package called “my-monitoring-agent”. Assume that the package repository is already configured <br>
    - Set the hostname in the configuration of the monitoring agent. Config file located at “/etc/mon-agent/agent.conf”  <br>
-   - Ensure that the two users, “alice” and “bob”, exist and are part of the group “my-staff” <br>
-- Also the instances will be assigned with tag name 'DEMO', so all instances will be grouped under the tag and can be deleted easily later (if not required)
-
-### Goal
-- The script can be used to create the bulk instances, applied with similar config across all the instances. Hence achieving the goal of "Cattle" instance provisioning. <br>
-- In case the instances needed to be updated with new config, We can update the new config as code in Chef recipe (push the code to git, after the change). <br>
-- We can terminate all previously created instances and then can re-create the instances in bulk by simply executing the script. <br>
+   - Ensure that the two users exists and are part of the group “my-staff” <br>
+- Also the instances will be assigned with tag name 'DEMO', so all instances will be grouped under the tag and can be deleted easily  
 
 ### Script functionality 
 - `Create_instance.sh` script uses the AWS CLI command to invoke the resource creation in AWS.
 - The AWS CLI command for instance creation is `aws ec2 run-instance`. 
 - We are sending the Cloud-init script file to AWS CLI user-data option. It contains the bash script and is executed by `Cloud-init` process when the EC2 instance is created.
-- System config could be set using different technologies like Chef or Ansible. So I've created two different Cloud-init scripts to show the possibility of using the same AWS resource creation script with config management tool passed an option (refer example [below](https://github.com/chefgs/cloud_init_sample/blob/master/README.md#script-running-procedure-from-terminal-prompt-or-gitbash)).
+- System config could be set using different technologies like Chef or Ansible. So I've created two different Cloud-init scripts to show the possibility of using the same AWS resource creation script with our choice of `config management` tool passed an option to the script. (refer example [below](https://github.com/chefgs/cloud_init_sample/blob/master/README.md#script-running-procedure-from-terminal-prompt-or-gitbash)).
 #### Chef way
 - The `cloud_init_chef.txt` is a shell script and has the code for installing the required installers, checking out repo from git and running `Chef-client` command to set the desired VM config 
 #### Ansible way
