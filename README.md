@@ -20,9 +20,9 @@
 - We are sending the Cloud-init script file to AWS CLI user-data option. It contains the bash script and is executed by `Cloud-init` process when the EC2 instance is created.
 - System config could be set using different technologies like Chef or Ansible. So I've created two different Cloud-init scripts to show the possibility of using the same AWS resource creation script with config management tool passed an option (refer example [below](https://github.com/chefgs/cloud_init_sample/blob/master/README.md#script-running-procedure-from-terminal-prompt-or-gitbash)).
 #### Chef way
-- The `cloud_init_chef.txt` has the code for installing the required installers, checking out repo from git and running `Chef-client` command to set the desired VM config 
+- The `cloud_init_chef.txt` is a shell script and has the code for installing the required installers, checking out repo from git and running `Chef-client` command to set the desired VM config 
 #### Ansible way
-- The `cloud_init_ansible.txt` has the code for installing the required installers, checking out repo from git and running `ansible-playbook` command to set the desired VM config 
+- The `cloud_init_ansible.txt` is a shell script and has the code for installing the required installers, checking out repo from git and running `ansible-playbook` command to set the desired VM config 
 
 ### Technologies used
 - `AWS CLI` command for instance creation <br>
