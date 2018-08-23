@@ -17,15 +17,20 @@
 ### Script functionality 
 - `Create_instance.sh` script uses the AWS CLI command to invoke the resource creation in AWS.
 - The AWS CLI command for instance creation is `aws ec2 run-instance`. 
-- We are sending the `install.txt` file as an option in AWS CLI user-data. It contains the bash script and is executed by `Cloud-init` process when the EC2 instance is created.
-- The `install.txt` has the code for installing the required installers, checking out repo from git and running Chef client command to set the desired VM config 
+- We are sending the Cloud-init script file to AWS CLI user-data option. It contains the bash script and is executed by `Cloud-init` process when the EC2 instance is created.
+- System config could be set using different technologies like Chef or Ansible. So I've created two different Cloud-init scripts to show the possibility of using the same AWS resource creation script with config management tool passed an option (refer example below).
+#### Chef way
+- The `cloud_init_chef.txt` has the code for installing the required installers, checking out repo from git and running `Chef-client` command to set the desired VM config 
+#### Ansible way
+- The `cloud_init_ansible.txt` has the code for installing the required installers, checking out repo from git and running `ansible-playbook` command to set the desired VM config 
 
 ### Technologies used
 - `AWS CLI` command for instance creation <br>
 - `Cloud-init` script passed in instance creation user_data section <br>
 - `bash shell` scripting used to code the `cloud-init` script <br>
-- `rpm-build` used for creation of dummy rpm package <br>
-- `Chef` used for setting the required system state explained in item 2 above <br>
+- `rpm-build` used for creation of dummy rpm package <br
+- `Chef` used for setting the required system state <br>
+- `Ansible` also used for setting the required system state <br>
 - `Github` used as source repo and git commands extensively used while development <br>
 - `Chef-client` run in local-mode eliminating the need of Chef server. <br>
 
@@ -43,7 +48,13 @@
 - Clone the cloud_init_sample repo : `git clone  https://github.com/chefgs/cloud_init_sample`
 - cd cloud_init_sample
 - Fetch the SG-rule name and key-pair name by executing the script `./get_sg_key.sh`
-- Example script execution command structure, `./create_instance.sh 1 rhel_sg_rule myaws_key` .  This command will create 1 EC2 instance of type t2.micro with RHEL OS <br>
+- Script takes the below options,
+  - Instance count
+  - SG rule name
+  - AWS key for accessing instance
+  - chef or ansible
+- Example script execution command structure, `./create_instance.sh 1 rhel_sg_rule myaws_key chef` .  This command will create 1 EC2 instance of type t2.micro with RHEL OS, with desired state set using Chef <br>
+- Example script execution command structure, `./create_instance.sh 1 rhel_sg_rule myaws_key ansible` .  This command will create 1 EC2 instance of type t2.micro with RHEL OS, with desired state set using Ansible <br>
 
 ## 3. Terminate Instances
 - Run `./terminate_instances.sh` . This command will terminate all the instances with tag name "DEMO".
@@ -69,7 +80,8 @@
 
 ## 6. Possible alternatives of Chef
 - The instance desired state configuration could also be possible with Chef "kind-of" alternative technologies like Puppet or Ansible etc.
-- So with the same `install.txt` script as a base, it can be modified to alternative Infra as code tool installation and execution.
+- So with the same Cloud-init script structure as a base, it can be modified to alternative Infra as code tool installation and execution.
+- One such possibility is depicted in this repo with Chef and Ansible cloud-init scripts
 
 ## 7. Output details
 #### Hostname set in OS and agent.conf
