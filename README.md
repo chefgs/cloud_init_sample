@@ -84,3 +84,4 @@
 - One such possibility is depicted in this repo with Chef and Ansible cloud-init scripts
 
 ## 7. Output details
+Please refer [here](https://github.com/chefgs/cloud_init_sample/blob/master/output.md) for output.
