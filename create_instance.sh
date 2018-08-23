@@ -16,12 +16,14 @@ fi
 sg_name=$2
 key_name=$3
 
+# System Config mangement option, either Chef way or Ansible way of setting desired state while instance creation
 if [ $4 == 'chef' ] ; then
 cloud_init_file='cloud_init_chef.txt'
 else
 cloud_init_file='cloud_init_ansible.txt'
 fi
 echo "Cloud-init file: $cloud_init_file"
+
 # aws resource-groups create-group --name demo-rg$RANDOM --resource-query '{"Type":"TAG_FILTERS_1_0","Query":"{\"ResourceTypeFilters\":[\"AWS::AllSupported\"],\"TagFilters\":[{\"Key\":\"Purpose\",\"Values\":[\"Demo\"]}]}"}'
 
 aws ec2 run-instances --image-id ami-28e07e50 --count $instance_count --instance-type t2.micro --key-name $key_name --security-groups $sg_name --user-data file://$cloud_init_file --tag-specifications 'ResourceType=instance,Tags=[{Key=DEMO,Value=Instance}]'
