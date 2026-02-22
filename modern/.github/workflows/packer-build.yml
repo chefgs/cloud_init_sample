@@ -1,0 +1,86 @@
+###############################################################
+# GitHub Actions: Packer AMI Build Pipeline
+#
+# Builds a pre-baked AMI whenever the Packer or Ansible config
+# changes. The new AMI ID is automatically picked up by the
+# next terraform apply via the aws_ami data source.
+###############################################################
+
+name: Build AMI with Packer
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "modern/packer/**"
+      - "modern/ansible/**"
+  workflow_dispatch:
+
+env:
+  AWS_REGION: "us-east-1"
+  PACKER_VERSION: "1.11.0"
+
+jobs:
+  build-ami:
+    name: Build and Publish AMI
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/github-actions-packer-role
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Setup Packer
+        uses: hashicorp/setup-packer@v3
+        with:
+          version: ${{ env.PACKER_VERSION }}
+
+      - name: Install Ansible
+        run: pip install ansible --quiet
+
+      - name: Packer Init
+        working-directory: modern/packer
+        run: packer init .
+
+      - name: Packer Validate
+        working-directory: modern/packer
+        run: packer validate .
+
+      - name: Packer Build
+        working-directory: modern/packer
+        run: |
+          packer build \
+            -var="aws_region=${{ env.AWS_REGION }}" \
+            -var="project_name=cloud-init-demo" \
+            .
+
+      - name: Extract AMI ID
+        id: ami
+        working-directory: modern/packer
+        run: |
+          AMI_ID=$(jq -r '.builds[-1].artifact_id' packer-manifest.json | cut -d: -f2)
+          echo "ami_id=$AMI_ID" >> $GITHUB_OUTPUT
+          echo "Built AMI: $AMI_ID"
+
+      - name: Store AMI ID in SSM Parameter
+        # Makes the new AMI available to Terraform without committing a value to git
+        run: |
+          aws ssm put-parameter \
+            --name "/cloud-init-demo/latest-ami-id" \
+            --value "${{ steps.ami.outputs.ami_id }}" \
+            --type String \
+            --overwrite
+
+      - name: Upload Packer Manifest
+        uses: actions/upload-artifact@v4
+        with:
+          name: packer-manifest
+          path: modern/packer/packer-manifest.json
