@@ -1,0 +1,52 @@
+#cloud-config
+##################################################################
+# Standalone version (no Terraform template variables)
+# Use this directly with: aws ec2 run-instances --user-data file://cloud-config-standalone.yaml
+# Or validate with: cloud-init schema --config-file cloud-config-standalone.yaml
+##################################################################
+
+hostname: cloud-init-server
+fqdn: cloud-init-server.internal
+manage_etc_hosts: true
+
+groups:
+  - my-staff
+
+users:
+  - default
+  - name: alice
+    groups: [my-staff]
+    shell: /bin/bash
+    lock_passwd: true
+    sudo: "ALL=(ALL) NOPASSWD:ALL"
+  - name: bob
+    groups: [my-staff]
+    shell: /bin/bash
+    lock_passwd: true
+
+package_update: true
+
+packages:
+  - git
+  - ansible-core
+  - rpm-build
+
+write_files:
+  - path: /etc/mon-agent/agent.conf
+    permissions: "0644"
+    owner: root:root
+    defer: true
+    content: |
+      hostname=cloud-init-server
+      log_level=INFO
+      check_interval=60
+
+runcmd:
+  - mkdir -p /etc/mon-agent /data/rpm_build /data/ansible
+  - git clone https://github.com/chefgs/create_dummy_rpm.git /data/rpm_build/
+  - chmod +x /data/rpm_build/create_rpm.sh
+  - cd /data/rpm_build && ./create_rpm.sh spec_file/my-monitoring-agent.spec >> /var/log/rpm_build.out 2>&1
+  - git clone https://github.com/chefgs/ansible_playbooks.git /data/ansible/playbooks
+  - ansible-playbook /data/ansible/playbooks/playbook.yml >> /var/log/ansiblerun.out 2>&1
+
+final_message: "Cloud-init completed. Check /var/log/cloud-init-output.log for details."
